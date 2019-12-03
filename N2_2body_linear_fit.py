@@ -294,10 +294,10 @@ tof = [459.1,3024.4,2131,2022,2527.7]
 testmq = [1.008,40,20.1797,18.01,28]
 _, t0 =  np.polyfit(np.sqrt(testmq), np.array(tof), 1)
 
-fac=0.2
-    #if tweaking in t0 is needed
-# =============================================================================
-t0 = t0 - fac*t0
+#fac=0.2
+#    #if tweaking in t0 is needed
+## =============================================================================
+#t0 = t0 - fac*t0
 
 # position offsets (should be adjusted based on momentum sums later!)
 pos_offset_1 = [0.1,0.0]
@@ -311,7 +311,9 @@ if load_old_param:
 
 param_list=[pos_offset_1[0],pos_offset_1[1],pos_offset_2[0],pos_offset_2[1],t0]
 
-
+"vel_calc_fac is the array of all factors we need to calculate velocities. These are obtained from simion. The order is mx1,cx1,mz1,cz1,mx2,cx2,mz2,cz2 where mx1 means slope of linear fit between x and vx for particle 1 and cx is the intercept. y is not included as x and y are identical due to cylindrical symmetry "
+vel_calc_fac=[1.8399,-0.0707,-5.5784,2689.3848,0.368,-0.0141,-0.2231,537.8464]
+mx1,cx1,mz1,cz1,mx2,cx2,mz2,cz2=vel_calc_fac
 # Divide data in chunks if using Rbf else keep it 1
 
 chunks=1
@@ -330,8 +332,6 @@ if optimise_parameter:
 
 
         xyt_arr=[ion1xgc,ion1ygc,ion1tgc,ion2xgc,ion2ygc,ion2tgc]
-        vel_calc_fac=[1.8399,-0.0707,-5.5784,2689.3848,0.368,-0.0141,-0.2231,537.8464]
-        mx1,cx1,mz1,cz1,mx2,cx2,mz2,cz2=vel_calc_fac
         plt.rcParams.update({'font.size': 12})
 
         "Calling GUI..."
@@ -373,18 +373,13 @@ if save_vel_KE:
         ion1ygc=np.add(ion1ygc,-pos_offset_1[1])
         ion2ygc=np.add(ion2ygc,-pos_offset_2[1])
 
+        vx1 = (mx1*ion1xgc)+cx1
+        vy1 = (mx1*ion1ygc)+cx1
+        vz1 = (mz1*(ion1tgc-t0))+cz1
 
-
-
-        vx1 = (1.8399*ion1xgc)-0.0707
-        vy1 = (1.8399*ion1ygc)-0.0707
-        vz1 = (-5.5784*(ion1tgc-t0))+2689.3848
-
-        vx2 = (0.368*ion2xgc)-0.0141
-        vy2 = (0.368*ion2ygc)-0.0141
-        vz2 = (-0.2231*(ion2tgc-t0))+537.8464
-
-
+        vx2 = (mx2*ion2xgc)+cx2
+        vy2 = (mx2*ion2ygc)+cx2
+        vz2 = (mz2*(ion2tgc-t0))+cz2
 
 
 

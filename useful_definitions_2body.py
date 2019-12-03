@@ -7,7 +7,6 @@ Created on Fri Nov  1 11:47:14 2019
 
 import numpy as np
 import matplotlib.pyplot as plt
-from helper_analysis import hist2d,hist1d, init_hist1d, init_hist2d
 from matplotlib.colors import LogNorm
 from fast_histogram import histogram1d,histogram2d
 plt.rcParams.update({'font.size': 16})
