@@ -67,17 +67,17 @@ event_counter=0
 all_evt_counter=0
 while True:
 #        if event_counter > 5000:
-#            break        
+#            break
     #checks if end of file is reached
-    if LineNum >= TotalNumLines: 
+    if LineNum >= TotalNumLines:
         break
 
     #reading the hits in terms of x, y, tof
     numberOfHits = DataFile[LineNum]
     LineNum = LineNum +1
-#        numberOfElectrons = ChunkData[LineNum]        
-#        LineNum = LineNum + 1    
-    ion = DataFile[LineNum:LineNum + numberOfHits * 3]      
+#        numberOfElectrons = ChunkData[LineNum]
+#        LineNum = LineNum + 1
+    ion = DataFile[LineNum:LineNum + numberOfHits * 3]
     if np.size(ion)<3: continue
     LineNum = LineNum + numberOfHits * 3
     #dividing by factor since thats how the numbers were saved in terms of int32
@@ -85,23 +85,23 @@ while True:
     ionX = ion[0]
     ionY = ion[1]
     ionTOF = ion[2]
-    
+
     checkCondition = threeConditions(ionTOF, ionGate1, ionGate2, ionGate3)
     all_evt_counter=all_evt_counter+1
     if checkCondition.sum() == 3:
-        
+
         ionTOF = ionTOF[checkCondition]
         ionX = ionX[checkCondition]
         ionY = ionY[checkCondition]
-                
+
 #        ionX[0] = ionX[0] - pos_offset_1[0]
 #        ionX[1] = ionX[1] - pos_offset_2[0]
 #        ionX[2] = ionX[2] - pos_offset_3[0]
-#        
+#
 #        ionY[0] = ionY[0] - pos_offset_1[1]
 #        ionY[1] = ionY[1] - pos_offset_2[1]
 #        ionY[2] = ionY[2] - pos_offset_3[1]
-        
+
         ion1x.append(ionX[0])
         ion1y.append(ionY[0])
         ion2x.append(ionX[1])
@@ -115,7 +115,7 @@ while True:
         event_counter=event_counter+1
         if event_counter%10000 == 0:
             print(event_counter)
-        
+
 thbody_after_permutation=np.size(ion1x)
 print('Total events = %d'%all_evt_counter)
 print('Total 3 body events after permutation = %d'%thbody_after_permutation)
@@ -184,7 +184,7 @@ if plot_all_tripico:
     ion3t=np.asarray(ion3t)
     ion23t=np.add(ion2t,ion3t)
     ion12t=np.add(ion1t,ion2t)
-    
+
     fig = plt.figure(figsize=(18,4))
     ax = fig.add_subplot(121)
     x,y,z=fhist2d(ion1t,ion23t,sp1_xmin,sp1_xmax,sp1_binsize,sp1_ymin,sp1_ymax,sp1_binsize)   #" 2) Hardcoded -Needs to be changed"
@@ -193,8 +193,8 @@ if plot_all_tripico:
     ax.set_xlabel('TOF1 (ns)')
     ax.set_ylabel('TOF2+TOF3 (ns)')
     ax.set_title('Tripico23')
-    
-    
+
+
     ax = fig.add_subplot(122)
     x,y,z=fhist2d(trotminus23,trotplus23,sp2_xmin,sp2_xmax,sp2_binsize,sp2_ymin,sp2_ymax,sp2_binsize)   #" 3) Hardcoded -Needs to be changed"
     f2=ax.pcolormesh(x,y,np.transpose(z),cmap=cmap,norm=LogNorm())
@@ -212,7 +212,7 @@ if plot_all_tripico:
     ax.set_xlabel('TOF3 (ns)')
     ax.set_ylabel('TOF1+TOF2 (ns)')
     ax.set_title('Tripico12')
-    
+
     ax = fig.add_subplot(122)
     x,y,z=fhist2d(trotminus12,trotplus12,sp4_xmin,sp4_xmax,sp4_binsize,sp4_ymin,sp4_ymax,sp4_binsize)
     f2=ax.pcolormesh(x,y,np.transpose(z),cmap=cmap,norm=LogNorm())
@@ -224,21 +224,21 @@ if plot_all_tripico:
     ##Positions
 if plot_det_images:
     fig = plt.figure(figsize=(18,4))
-    
+
     x,y,z=fhist2d(ion1x,ion1y,-50,50,0.5,-50,50,0.5)
     ax = fig.add_subplot(131)
     f1=ax.pcolormesh(x,y,z,norm=LogNorm(),cmap=cmap)
     fig.colorbar(f1)
     ax.set_title('All 1$^{st}$ hits')
     ax.set_aspect('equal')
-    
+
     x,y,z=fhist2d(ion2x,ion2y,-50,50,0.5,-50,50,0.5)
     ax = fig.add_subplot(132)
     f2=ax.pcolormesh(x,y,z,norm=LogNorm(),cmap=cmap)
     fig.colorbar(f2)
     ax.set_title('All 2$^{nd}$ hits')
     ax.set_aspect('equal')
-    
+
     x,y,z=fhist2d(ion3x,ion3y,-50,50,0.5,-50,50,0.5)
     ax = fig.add_subplot(133)
     f3=ax.pcolormesh(x,y,z,norm=LogNorm(),cmap=cmap)
@@ -257,7 +257,7 @@ Gate_on_tripico23=False
 Gate_on_tripico12=True
 if Gate_on_tripico12:
     ## In addition to tripico gates you can also add ion position gates as shown below:
-    condition=((trotminus12>t123rotGate[0]) & (trotminus12<t123rotGate[1]) & (trotplus12>t123rotGate[2]) & (trotplus12<t123rotGate[3]) & (ion2t>2159) & (ion2t<2233) & (ion1t>1470) & (ion1t<1530))
+    condition=((trotminus12>t123rotGate[0]) & (trotminus12<t123rotGate[1]) & (trotplus12>t123rotGate[2]) & (trotplus12<t123rotGate[3]))  # & (ion2t>2159) & (ion2t<2233) & (ion1t>1470) & (ion1t<1530))
 if Gate_on_tripico23:
     condition=((trotminus23>t123rotGate[0]) & (trotminus23<t123rotGate[1]) & (trotplus23>t123rotGate[2]) & (trotplus23<t123rotGate[3]))
 
@@ -285,7 +285,7 @@ plot_gated_channel=True
 plot_tof_x_gated=True
 
 if plot_gated_channel:
-    
+
     fig = plt.figure(figsize=(18,4))
     ax = fig.add_subplot(121)
     x,y,z=fhist2d(ion1tg,ion23tg,sp1_xmin,sp1_xmax,sp1_binsize,sp1_ymin,sp1_ymax,sp1_binsize)   #" 2) Hardcoded -Needs to be changed"
@@ -294,7 +294,7 @@ if plot_gated_channel:
     ax.set_xlabel('TOF1 (ns)')
     ax.set_ylabel('TOF2+TOF3 (ns)')
     ax.set_title('Tripico23 gated (%s+%s%s)'%(label_species[0],label_species[1],label_species[2]))
-    
+
     ax = fig.add_subplot(122)
     x,y,z=fhist2d(trotminus23g,trotplus23g,sp2_xmin,sp2_xmax,sp2_binsize,sp2_ymin,sp2_ymax,sp2_binsize)
     f2=ax.pcolormesh(x,y,np.transpose(z),cmap=cmap,norm=LogNorm())
@@ -303,7 +303,7 @@ if plot_gated_channel:
     ax.set_ylabel('(TOF2+TOF3)+TOF1 (ns)')
     ax.set_title('Tripico23 gated + rotated (%s+%s%s)'%(label_species[0],label_species[1],label_species[2]))
     plt.savefig(basedir+'tripico23_gated.png',bbox_inches='tight')
-    
+
     fig = plt.figure(figsize=(18,4))
     ax = fig.add_subplot(121)
     x,y,z=fhist2d(ion3tg,ion12tg,sp3_xmin,sp3_xmax,sp3_binsize,sp3_ymin,sp3_ymax,sp3_binsize)   #" 2) Hardcoded -Needs to be changed"
@@ -312,7 +312,7 @@ if plot_gated_channel:
     ax.set_xlabel('TOF3 (ns)')
     ax.set_ylabel('TOF1+TOF2 (ns)')
     ax.set_title('Tripico12 gated (%s+%s%s)'%(label_species[0],label_species[1],label_species[2]))
-    
+
     ax = fig.add_subplot(122)
     x,y,z=fhist2d(trotminus12g,trotplus12g,sp4_xmin,sp4_xmax,sp4_binsize,sp4_ymin,sp4_ymax,sp4_binsize)   #" 3) Hardcoded -Needs to be changed"
     f2=ax.pcolormesh(x,y,np.transpose(z),cmap=cmap,norm=LogNorm())
@@ -326,7 +326,7 @@ if plot_tof_x_gated:
     all_x=np.concatenate((ion1yg,ion2yg,ion3yg),axis=0)
     all_tof=np.concatenate((ion1tg,ion2tg,ion3tg),axis=0)
     fig, ax = plt.subplots(figsize=(18,4))
-    
+
     x,y,z=fhist2d(all_tof,all_x,0,4000,1,-50,50,0.5)
     f1=ax.pcolormesh(x,y,np.transpose(z),norm=LogNorm(),cmap=cmap)
     fig.colorbar(f1)
@@ -336,21 +336,21 @@ if plot_tof_x_gated:
 
 if plot_det_images_gated:
     fig = plt.figure(figsize=(18,4))
-    
+
     x,y,z=fhist2d(ion1xg,ion1yg,-50,50,0.5,-50,50,0.5)
     ax = fig.add_subplot(131)
     f1=ax.pcolormesh(x,y,z,norm=LogNorm(),cmap=cmap)
     fig.colorbar(f1)
     ax.set_title(label_species[0])
     ax.set_aspect('equal')
-    
+
     x,y,z=fhist2d(ion2xg,ion2yg,-50,50,0.5,-50,50,0.5)
     ax = fig.add_subplot(132)
     f2=ax.pcolormesh(x,y,z,norm=LogNorm(),cmap=cmap)
     fig.colorbar(f2)
     ax.set_title(label_species[1])
     ax.set_aspect('equal')
-    
+
     x,y,z=fhist2d(ion3xg,ion3yg,-50,50,0.5,-50,50,0.5)
     ax = fig.add_subplot(133)
     f3=ax.pcolormesh(x,y,z,norm=LogNorm(),cmap=cmap)
@@ -363,8 +363,8 @@ if plot_det_images_gated:
 
 prange=[-500,500,1]
 
-optimise_parameter=False  # Set time offset and position offset to make momentum sums peak at zero
-save_vel_KE = True        # Save velocities and KE for all data in h5 file (Do it after optimizing parameters)
+optimise_parameter=True  # Set time offset and position offset to make momentum sums peak at zero
+save_vel_KE = False        # Save velocities and KE for all data in h5 file (Do it after optimizing parameters)
 
 # Fit to get t0
 tof = [191,2733.66,1739.05,2239.94,4296.46]
@@ -473,7 +473,7 @@ if save_vel_KE:
         vx1 = (mx1*ion1xgc)+cx1
         vy1 = (mx1*ion1ygc)+cx1
         vz1 = (mz1*(ion1tgc-t0))+cz1
-        
+
         vx2 = (mx2*ion2xgc)+cx2
         vy2 = (mx2*ion2ygc)+cx2
         vz2 = (mz2*(ion2tgc-t0))+cz2
