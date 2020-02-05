@@ -26,7 +26,7 @@ from useful_definitions import fhist1d,fhist2d
 #top = tkinter.Tk()
 #top.geometry("2000x2000")
 class optimise_parameters:
-    def __init__(self,top,xyt_array,vel_calc_fact,param_list,mass,Run_name):
+    def __init__(self,top,xyt_array,vel_calc_fact,param_list,mass,Run_name,channel):
 #        # Code to add widgets will go here...
 #        self.x=x
 #        self.y=y
@@ -35,6 +35,7 @@ class optimise_parameters:
         self.mass=mass
         self.xyt_array=xyt_array
         self.Run_name=Run_name
+        self.channel=channel
         self.param_list=param_list
         top.title('Parameter Optimisation GUI')
         top.bind('<Return>', self.refresh)
@@ -235,7 +236,7 @@ class optimise_parameters:
         self.plots()
 
     def write_parameters(self):
-        with open(self.Run_name+'final_parameters.txt', mode='w') as file:
+        with open(self.Run_name+'_'+self.channel+'_final_parameters.txt', mode='w') as file:
             for param in self.param_list:
                 file.write(str(param))
                 file.write('\n')
