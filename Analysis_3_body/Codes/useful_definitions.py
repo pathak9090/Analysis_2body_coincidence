@@ -297,12 +297,12 @@ def NP(p1x,p1y,p1z,label1,p2x,p2y,p2z,label2,p3x,p3y,p3z,label3,fragment_fixed,r
     NPhz=np.divide(NPhz,np.max(NPhz))
     fac=1+binsize
     plt.figure()
-    plt.pcolormesh(a1,b1,np.transpose(NPhz), cmap='jet')#,norm=LogNorm())
+    plt.pcolormesh(a1,b1,np.transpose(NPhz), cmap='jet',norm=LogNorm())
 #    plt.arrow( 0, 0, 1, 0, fc='white', ec='white',lw=1,head_width=0.05, head_length=0.1)
-    plt.arrow( 0, 0, 1, 0, fc='black', ec='black',lw=1,head_width=0.05, head_length=0.1)
-    plt.text(rangemin+fac,rangemax-fac,label1,fontweight='bold',color='red')
-    plt.text(rangemin+fac,rangemin+fac-0.35,label2,fontweight='bold',color='red')
-    plt.text(rangemax-1.25*fac,0.08,label3,fontweight='bold',color='red')
+    plt.arrow( 0, 0, 1, 0, fc='black', ec='black',lw=2,head_width=0.1, head_length=0.1)
+    plt.text(rangemin+fac,rangemax-fac,label1,fontweight='bold',color='red',bbox=dict(facecolor='white', alpha=0.8))
+    plt.text(rangemin+fac,rangemin+fac-0.35,label2,fontweight='bold',color='red',bbox=dict(facecolor='white', alpha=0.8))
+    plt.text(rangemax-1.25*fac,0.08,label3,fontweight='bold',color='red',bbox=dict(facecolor='white', alpha=0.8))
 #    if (run_name[-4:]=='105C') or (run_name[-4:]=='160C'):
 #        plt.title('Newton plot (T = '+run_name[-4:]+')')
 #    else:
@@ -335,32 +335,30 @@ def cosf1f2(p1x,p1y,p1z,p2x,p2y,p2z):
     cos12=np.divide(dot12,mod12)
     return cos12
 
-#def cos13(p1x,p1y,p1z,p3x,p3y,p3z):
-#    p1xyz=np.array((p1x,p1y,p1z))
-##    p2xyz=np.array((p2x,p2y,p2z))
-#    p3xyz=np.array((p3x,p3y,p3z))
-#    p1mod=np.sqrt((p1xyz**2).sum(axis=0))
-##    p2mod=np.sqrt((p2xyz**2).sum(axis=0))
-#    p3mod=np.sqrt((p3xyz**2).sum(axis=0))
-#
-#    dot13=(p1xyz*p3xyz).sum(axis=0)
-#    mod13=np.multiply(p1mod,p3mod)
-#    cosH1H3=np.divide(dot13,mod13)
-#    return cosH1H3
-#
-#def cos23(p2x,p2y,p2z,p3x,p3y,p3z):
-##    p1xyz=np.array((p1x,p1y,p1z))
-#    p2xyz=np.array((p2x,p2y,p2z))
-#    p3xyz=np.array((p3x,p3y,p3z))
-##    p1mod=np.sqrt((p1xyz**2).sum(axis=0))
-#    p2mod=np.sqrt((p2xyz**2).sum(axis=0))
-#    p3mod=np.sqrt((p3xyz**2).sum(axis=0))
-#
-#    dot23=(p2xyz*p3xyz).sum(axis=0)
-#    mod23=np.multiply(p2mod,p3mod)
-#    cosH2H3=np.divide(dot23,mod23)
-#    return cosH2H3
+"Dalitz Plot"
 
+def DP(KE,DPrange,label_species,cmap,basedir,log=None):
+    KE=np.asarray(KE)
+    KER=KE.sum(axis=0)
+    KE=np.divide(KE,KER)
+    KE1,KE2,KE3=KE
+    DPx=np.add(KE3,-KE2)/np.sqrt(3)
+    DPy=np.add(KE1,-(1/3))
+    x,y,z=fhist2d(DPx,DPy,DPrange[0],DPrange[1],DPrange[2],DPrange[3],DPrange[4],DPrange[5])
+    fig, ax = plt.subplots()
+    if log:
+        f1=ax.pcolormesh(x,y,np.transpose(z),norm=LogNorm(),cmap=cmap)
+    else:
+        f1=ax.pcolormesh(x,y,np.transpose(z),cmap=cmap)
+    fig.colorbar(f1)
+    circle2 = plt.Circle((0, 0), 0.33, color='red', fill=False)
+    ax.add_artist(circle2)
+#    ax.set_xlabel(r'$\frac{ε(%s)- ε(%s)}{\sqrt(3)}$ (eV)'%(label_species[2],label_species[1]))
+    ax.set_xlabel(r'$\frac{ε3-ε2}{\sqrt{3}} (eV)$')
+    ax.set_ylabel(r'(ε1-$\frac{1}{3}$) (eV)')
+    ax.set_title('Dalitz Plot (%s + %s + %s)'%(label_species[0],label_species[1],label_species[2]))
+    plt.savefig(basedir+'DP_gated.png',bbox_inches='tight')
+    
 "This function sums total counts of a 2D histogram (sums 2D array)"
 
 def sum2D(z2d):
