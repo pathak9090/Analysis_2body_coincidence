@@ -11,7 +11,7 @@ This project analyses and calculates the momentum and energies based on position
 	
 ### Technologies
 Project is created with:
-* fast-histogram version: 0.9 (Offers 25 times more speed compared to numpy.histogram2d)
+* fast-histogram version: 0.9 (Offers 25 times more speed for 2D histograms in comparison to numpy.histogram2d)
 * h5py version: 3.1.0
 * SciPy version: 1.6.0
 * NumPy version: 1.19.0
